@@ -1,0 +1,27 @@
+################### uWSGIbeat Configuration Example #########################
+
+############################# Input ############################################
+input:
+  # URL to uWSGI monitoring page.
+  url: 127.0.0.1:1717
+
+  # Method to dial to the server.
+  method: tcp
+
+  # In seconds, defines how often to read statistics.
+  period: 10
+
+
+############################# Output ##########################################
+
+# Configure what outputs to use when sending the data collected by the beat.
+# You can enable one or multiple outputs by setting enabled option to true.
+output:
+
+  ### Console as output
+  console:
+    # Enabling console output.
+    enabled: true
+
+    # Pretty print json event.
+    pretty: false
