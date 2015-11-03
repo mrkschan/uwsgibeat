@@ -8,7 +8,7 @@ var Version = "1.0.0-beta1"
 var Name = "uwsgibeat"
 
 func main() {
-	ub := &UWSGIbeat{}
+	ub := &Uwsgibeat{}
 
 	b := beat.NewBeat(Name, Version, ub)
 
