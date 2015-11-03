@@ -17,7 +17,6 @@ type Uwsgibeat struct {
 	UbConfig ConfigSettings
 
 	url    *url.URL
-	method string
 	period time.Duration
 }
 
@@ -41,12 +40,6 @@ func (ub *Uwsgibeat) Config(b *beat.Beat) error {
 		return err
 	}
 
-	if ub.UbConfig.Input.Method != "" {
-		ub.method = ub.UbConfig.Input.Method
-	} else {
-		ub.method = "tcp"
-	}
-
 	if ub.UbConfig.Input.Period != nil {
 		ub.period = time.Duration(*ub.UbConfig.Input.Period) * time.Second
 	} else {
@@ -55,7 +48,6 @@ func (ub *Uwsgibeat) Config(b *beat.Beat) error {
 
 	logp.Debug(selector, "Init uwsgibeat")
 	logp.Debug(selector, "Watch %v", ub.url)
-	logp.Debug(selector, "Method %v", ub.method)
 	logp.Debug(selector, "Period %v", ub.period)
 
 	return nil

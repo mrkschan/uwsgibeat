@@ -3,10 +3,9 @@
 ############################# Input ############################################
 input:
   # URL to uWSGI monitoring page.
-  url: 127.0.0.1:1717
-
-  # Method to dial to the server.
-  method: tcp
+  # E.g. ":1717", "tcp://127.0.0.1:1717", "unix:///tmp/stats.socket"
+  # Defaults to "tcp://127.0.0.1:1717".
+  url: "tcp://127.0.0.1:1717"
 
   # In seconds, defines how often to read statistics.
   period: 10
