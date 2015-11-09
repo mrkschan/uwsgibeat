@@ -12,7 +12,7 @@ import (
 // Parser parses stats from uWSGI server.
 type Parser interface {
 	// Parse stats from the given URL.
-	Parse(url url.URL) (map[string]interface{}, error)
+	Parse(u url.URL) (map[string]interface{}, error)
 }
 
 // StatsParser is a Parser that parses uWSGI stats server.
@@ -25,12 +25,12 @@ func NewStatsParser() Parser {
 }
 
 // Parse uWSGI stats from the given URL.
-func (p *StatsParser) Parse(url url.URL) (map[string]interface{}, error) {
+func (p *StatsParser) Parse(u url.URL) (map[string]interface{}, error) {
 	var reader io.Reader
 
-	switch url.Scheme {
+	switch u.Scheme {
 	case "tcp":
-		conn, err := net.Dial(url.Scheme, url.Host)
+		conn, err := net.Dial(u.Scheme, u.Host)
 		if err != nil {
 			return nil, err
 		}
@@ -38,7 +38,7 @@ func (p *StatsParser) Parse(url url.URL) (map[string]interface{}, error) {
 		reader = conn
 
 	default:
-		return nil, fmt.Errorf("%v is a unsupported protocol", url.Scheme)
+		return nil, fmt.Errorf("%v is a unsupported protocol", u.Scheme)
 	}
 
 	// uWSGI stats is expected to be a JSON document.
