@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net"
 	"net/url"
+	"strings"
 )
 
 // Parser parses stats from uWSGI server.
@@ -31,6 +32,14 @@ func (p *StatsParser) Parse(u url.URL) (map[string]interface{}, error) {
 	switch u.Scheme {
 	case "tcp":
 		conn, err := net.Dial(u.Scheme, u.Host)
+		if err != nil {
+			return nil, err
+		}
+		defer conn.Close()
+		reader = conn
+	case "unix":
+		path := strings.Replace(u.String(), "unix://", "", -1)
+		conn, err := net.Dial(u.Scheme, path)
 		if err != nil {
 			return nil, err
 		}

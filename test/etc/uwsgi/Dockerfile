@@ -14,4 +14,4 @@ RUN pip install uwsgi==2.0.11.2
 COPY wsgi.py wsgi.py
 
 EXPOSE 8080 1717
-CMD ["uwsgi", "--wsgi-file", "wsgi.py", "--http", ":8080", "--stats", ":1717"]
+CMD ["uwsgi", "--wsgi-file", "wsgi.py", "--http", ":8080", "--stats", ":1717", "--stats", "/tmp/uwsgi/stats.sock"]

@@ -1,6 +1,8 @@
 package parser
 
 import (
+	"os"
+	"path"
 	"testing"
 
 	"fmt"
@@ -78,4 +80,51 @@ func TestStatsParser(t *testing.T) {
 	assert.Equal(t, "idle", w1["status"])
 	assert.Equal(t, 1317235041, w1["last_spawn"])
 	assert.NotNil(t, w1["apps"])
+
+	ts2, err := NewTCPServer("unix", path.Join(os.TempDir(), "uwsgibeat-ts2.sock"), func(c net.Conn) {
+		payload := `{
+        "workers": [{
+          "id": 1,
+          "pid": 31759,
+          "requests": 0,
+          "exceptions": 0,
+          "status": "idle",
+          "rss": 0,
+          "vsz": 0,
+          "running_time": 0,
+          "last_spawn": 1317235041,
+          "respawn_count": 1,
+          "tx": 0,
+          "avg_rt": 0,
+          "apps": [{
+            "id": 0,
+            "modifier1": 0,
+            "mountpoint": "",
+            "requests": 0,
+            "exceptions": 0,
+            "chdir": ""
+          }]
+        }]}`
+		fmt.Fprintln(c, payload)
+	})
+	if err != nil {
+		t.Error(err)
+	}
+	defer ts2.Close()
+
+	p2 := &StatsParser{}
+	u2, _ := url.Parse(fmt.Sprintf("unix://%s", path.Join(os.TempDir(), "uwsgibeat-ts2.sock")))
+	s2, _ := p2.Parse(*u2)
+
+	assert.NotNil(t, s2["workers"])
+	assert.IsType(t, []interface{}{}, s2["workers"])
+	ww2 := s2["workers"].([]interface{})
+	w2 := ww2[0].(map[string]interface{})
+
+	assert.Equal(t, 1, w2["id"])
+	assert.Equal(t, 31759, w2["pid"])
+	assert.Equal(t, 0, w2["requests"])
+	assert.Equal(t, "idle", w2["status"])
+	assert.Equal(t, 1317235041, w2["last_spawn"])
+	assert.NotNil(t, w2["apps"])
 }

@@ -11,5 +11,7 @@ kibana-41:
 uwsgi:
     build: ./etc/uwsgi/
     ports:
-        - "8080:8080"
-        - "1717:1717"
+      - "8080:8080"
+      - "1717:1717"
+    volumes:
+      - /tmp/uwsgi:/tmp/uwsgi
