@@ -15,6 +15,6 @@ COPY wsgi.py wsgi.py
 
 EXPOSE 8080 1717
 
-CMD ["uwsgi", "--wsgi-file", "wsgi.py", "--http", ":8080", "--stats", ":1717",]
-#CMD ["uwsgi", "--wsgi-file", "wsgi.py", "--http", ":8080", "--stats", ":1717", "--stats-http"]
-#CMD ["uwsgi", "--wsgi-file", "wsgi.py", "--http", ":8080", "--stats", "/tmp/uwsgi/stats.sock"]
+CMD ["uwsgi", "--wsgi-file", "wsgi.py", "--http", ":8080", "--stats", ":1717"]
+# CMD ["uwsgi", "--wsgi-file", "wsgi.py", "--http", ":8080", "--stats", ":1717", "--stats-http"]
+# CMD ["uwsgi", "--wsgi-file", "wsgi.py", "--http", ":8080", "--stats", "/tmp/uwsgi/stats.sock"]
