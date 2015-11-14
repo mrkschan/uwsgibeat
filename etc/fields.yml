@@ -1,0 +1,155 @@
+version: 1.0
+
+defaults:
+  type: string
+  required: false
+  index: not_analyzed
+  doc_values: true
+  ignore_above: 1024
+
+env:
+  type: group
+  description: >
+    Contains common fields available in all event types.
+  fields:
+    - name: "@timestamp"
+      type: date
+      required: true
+      format: YYYY-MM-DDTHH:MM:SS.milliZ
+      example: 2015-01-24T14:06:05.071Z
+      description: >
+        The timestamp when the measurements were taken. The precision is in milliseconds.
+        The timezone is UTC.
+
+    - name: type
+      description: >
+        Set to "uwsgi" to specify that are uWSGI stats.
+      required: true
+
+    - name: count
+      type: int
+      description: >
+        For how many transactions is this event representative. This
+        is generally the inverse of the sampling rate. For example, for
+        a sample rate of 1/10, the count is 10. The count is used by the
+        UIs to return estimated values. Reserved for future usage.
+      required: true
+
+    - name: shipper
+      type: string
+      description: >
+        Name of the shipper sending the statistics
+
+uwsgi:
+  type: group
+  description: >
+    Contains uWSGI stats. Details that you can get by reading the uWSGI stats server page.
+  fields:
+    - name: version
+      type: string
+      description: >
+        uWSGI version.
+
+    - name: cwd
+      type: string
+      description: >
+        Current working directory.
+
+    - name: pid
+      type: int
+      description: >
+        uWSGI PID.
+
+    - name: gid
+      type: int
+      description: >
+        GID that uWSGI is using to run.
+
+    - name: uid
+      type: int
+      description: >
+        UID that uWSGI is using to run.
+
+    - name: listen_queue
+      type: int
+      description: >
+        Listen queue length.
+
+    - name: listen_queue_errors
+      type: int
+      description: >
+        Listen queue errors.
+
+    - name: load
+      type: int
+      description: >
+        Load.
+
+    - name: signal_queue
+      type: int
+      description: >
+        Signal queue length.
+
+    - name: workers
+      type: nested
+      fields:
+        - name: id
+          type: int
+          description: >
+            Worker ID.
+
+        - name: pid
+          type: int
+          description: >
+            Worker PID.
+
+        - name: requests
+          type: int
+          description: >
+            How many requests worker did since worker (re)spawn.
+
+        - name: exceptions
+          type: int
+          description: >
+            Exceptions.
+
+        - name: status
+          type: string
+          description: >
+            Worker is busy or free to use?
+
+        - name: rss
+          type: int
+          description: >
+            Worker RSS (Resident Set Size, see linux memory management).
+
+        - name: vsz
+          type: int
+          description: >
+            Worker VSZ (Virtual Memory Size, see linux memory management).
+
+        - name: running_time
+          type: int
+          description: >
+            How long worker is working.
+
+        - name: last_spawn
+          type: date
+          format: epoch_second
+          description: >
+            When does the uWSGI process (re)spawn.
+
+        - name: respawn_count
+          type: int
+          description: >
+            How many times does uWSGI (re)spawn.
+
+        - name: tx
+          type: int
+          description: >
+            How many data was transmitted by worker.
+
+        - name: avg_rt
+          type: int
+          description: >
+            Average request time.
