@@ -6,6 +6,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net"
+	"net/http"
 	"net/url"
 	"strings"
 )
@@ -45,7 +46,17 @@ func (p *StatsParser) Parse(u url.URL) (map[string]interface{}, error) {
 		}
 		defer conn.Close()
 		reader = conn
+	case "http":
+		res, err := http.Get(u.String())
+		if err != nil {
+			return nil, err
+		}
+		defer res.Body.Close()
 
+		if res.StatusCode != 200 {
+			return nil, fmt.Errorf("HTTP%s", res.Status)
+		}
+		reader = res.Body
 	default:
 		return nil, fmt.Errorf("%v is a unsupported protocol", u.Scheme)
 	}

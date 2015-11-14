@@ -7,6 +7,8 @@ import (
 
 	"fmt"
 	"net"
+	"net/http"
+	"net/http/httptest"
 	"net/url"
 
 	"github.com/stretchr/testify/assert"
@@ -127,4 +129,48 @@ func TestStatsParser(t *testing.T) {
 	assert.Equal(t, "idle", w2["status"])
 	assert.Equal(t, 1317235041, w2["last_spawn"])
 	assert.NotNil(t, w2["apps"])
+
+	ts3 := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		payload := `{
+        "workers": [{
+          "id": 1,
+          "pid": 31759,
+          "requests": 0,
+          "exceptions": 0,
+          "status": "idle",
+          "rss": 0,
+          "vsz": 0,
+          "running_time": 0,
+          "last_spawn": 1317235041,
+          "respawn_count": 1,
+          "tx": 0,
+          "avg_rt": 0,
+          "apps": [{
+            "id": 0,
+            "modifier1": 0,
+            "mountpoint": "",
+            "requests": 0,
+            "exceptions": 0,
+            "chdir": ""
+          }]
+        }]}`
+		fmt.Fprintln(w, payload)
+	}))
+	defer ts3.Close()
+
+	p3 := &StatsParser{}
+	u3, _ := url.Parse(ts3.URL)
+	s3, _ := p3.Parse(*u3)
+
+	assert.NotNil(t, s3["workers"])
+	assert.IsType(t, []interface{}{}, s3["workers"])
+	ww3 := s3["workers"].([]interface{})
+	w3 := ww3[0].(map[string]interface{})
+
+	assert.Equal(t, 1, w3["id"])
+	assert.Equal(t, 31759, w3["pid"])
+	assert.Equal(t, 0, w3["requests"])
+	assert.Equal(t, "idle", w3["status"])
+	assert.Equal(t, 1317235041, w3["last_spawn"])
+	assert.NotNil(t, w3["apps"])
 }
